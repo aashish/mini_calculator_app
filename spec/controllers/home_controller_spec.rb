@@ -21,7 +21,7 @@ RSpec.describe HomeController, type: :controller do
     it 'assigns @result to caliculated value' do
       post 'calculate', expression: '5*3-2.11/2+9*100'
       expect(assigns(:result)).not_to be_nil
-      expect(assigns(:result)).to eq( 913.95 )
+      expect(assigns(:result)).to eq( 913.945 )
     end
 
     it "should print 'Invalid input' if input is empty" do

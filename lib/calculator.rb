@@ -1,38 +1,27 @@
 class Calculator
+  attr_accessor :input
+
   def initialize(input)
-    @input = input
+    @input = input.gsub(/\s+/, "")
+  end
+
+  def process(input = @input)
+     [:+, :-, :*, :/].each do |op|
+      factors = input.split(op.to_s)
+      return factors.map {|x| process(x) }.inject(op) if factors.size > 1
+     end
+    (input.to_f).round(2) # No calculation needed
+  end
+
+  def valid?
+    if @input.empty?
+      return false
+    else
+      return !(/[^\+\-\*\/\d+(?:\.\d+)?]|^\W|\W{2,}|\W$/ =~ @input)
+    end
   end
 
   def result
-    # remove outer whitespace
-    @input.gsub!(/\s+/, "")
-
-    # perform all multiplication and division
-    while match = /(\d+(?:\.\d+)?)(\*|\/)(\d+(?:\.\d+)?)/.match(@input)
-      # binding.pry
-      calculate(match)
-    end
-
-    # perform all addition and subtraction
-    while match = /(\d+(?:\.\d+)?)(\+|-)(\d+(?:\.\d+)?)/.match(@input)
-      calculate(match)
-    end
-
-    # validate result and check for floats
-    if /^-?\d+$/ =~ @input
-      @input.to_i
-    elsif /^-?\d+\.\d+$/ =~ @input
-      @input.to_f.round(2)
-    else
-      "Invalid input"
-    end
-  end
-
-  # calculate
-  def calculate(match)
-    substring, a, operator, b = match.to_a
-    number = a.to_f.method(operator).(b.to_f)
-    number = number.to_i if number % 1 == 0
-    @input.sub!(substring, number.to_s)
-  end
+    process(@input)
+  end 
 end

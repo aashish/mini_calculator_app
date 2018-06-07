@@ -5,9 +5,13 @@ class HomeController < ApplicationController
   end
 
   def calculate
-    exp = params[:expression].gsub(/\s+/, "") 
-    render :index if exp.nil?
-    @result = Calculator.new(exp).result
+    calc = Calculator.new(params[:expression])  
+
+    if calc.valid?
+      @result = calc.process
+    else
+      @result = 'Invalid input'
+    end
     render :index
   end
 end
